@@ -2,28 +2,28 @@
 
 namespace app\services;
 
-use app\models\Categorie;
+use app\models\Category;
 use app\helpers\ApiResponse;
 use app\helpers\ApiCode;
 
-class CategorieService
+class CategoryService
 {
-    public function getCategorieList(): array
+    public function getCategoryList(): array
     {
-        $categorieList = Categorie::find()->all();
+        $categoryList = Category::find()->all();
 
-        return ApiResponse::success($categorieList);
+        return ApiResponse::success($categoryList);
     }
 
-    public function getCategorieById($id): array
+    public function getCategoryById($id): array
     {
         if (!$id) {
             return ApiResponse::missingFields(['id']);
         }
 
-        $categorie = Categorie::findOne($id);
+        $category = Category::findOne($id);
 
-        if (!$categorie) {
+        if (!$category) {
             return ApiResponse::error(
                 ApiCode::CATEGORY_NOT_FOUND,
                 404,
@@ -33,38 +33,39 @@ class CategorieService
             );
         }
 
-        return ApiResponse::success($categorie);
+        return ApiResponse::success($category);
     }
 
-    public function createCategorie($data): array
+    public function createCategory($data): array
     {
         if (!$data) {
             return ApiResponse::missingFields(['data']);
         }
 
-        $categorie = new Categorie();
+        $category = new Category();
 
-        $categorie->name = isset($data['name']) ? trim($data['name']) : null;
-        $categorie->description = isset($data['description']) ? trim($data['description']) : null;
-        $categorie->image = isset($data['image']) ? trim($data['image']) : null;
-        $categorie->slug = isset($data['slug']) ? trim($data['slug']) : null;
+        $category->name = isset($data['name']) ? trim($data['name']) : null;
+        $category->description = isset($data['description']) ? trim($data['description']) : null;
+        $category->image = isset($data['image']) ? trim($data['image']) : null;
+        $category->slug = isset($data['slug']) ? trim($data['slug']) : null;
+        $category->parent_id = isset($data['parent_id']) ? trim($data['parent_id']) : null;
 
-        if (!$categorie->save()) {
-            return ApiResponse::validation($categorie);
+        if (!$category->save()) {
+            return ApiResponse::validation($category);
         }
 
-        return ApiResponse::success($categorie);
+        return ApiResponse::success($category);
     }
 
-    public function updateCategorie($id, $data): array
+    public function updateCategory($id, $data): array
     {
         if (!$id) {
             return ApiResponse::missingFields(['id']);
         }
 
-        $categorie = Categorie::findOne($id);
+        $category = Category::findOne($id);
 
-        if (!$categorie) {
+        if (!$category) {
             return ApiResponse::error(
                 ApiCode::CATEGORY_NOT_FOUND,
                 404,
@@ -80,37 +81,37 @@ class CategorieService
         $slug = isset($data['slug']) ? trim($data['slug']) : null;
 
         if ($name !== null) {
-            $categorie->name = $name;
+            $category->name = $name;
         }
 
         if ($description !== null) {
-            $categorie->description = $description;
+            $category->description = $description;
         }
 
         if ($image !== null) {
-            $categorie->image = $image;
+            $category->image = $image;
         }
 
         if ($slug !== null) {
-            $categorie->slug = $slug;
+            $category->slug = $slug;
         }
 
-        if (!$categorie->save()) {
-            return ApiResponse::validation($categorie);
+        if (!$category->save()) {
+            return ApiResponse::validation($category);
         }
 
-        return ApiResponse::success($categorie);
+        return ApiResponse::success($category);
     }
 
-    public function deleteCategorie($id): array
+    public function deleteCategory($id): array
     {
         if (!$id) {
             return ApiResponse::missingFields(['id']);
         }
 
-        $categorie = Categorie::findOne($id);
+        $category = Category::findOne($id);
 
-        if (!$categorie) {
+        if (!$category) {
             return ApiResponse::error(
                 ApiCode::CATEGORY_NOT_FOUND,
                 404,
@@ -120,10 +121,10 @@ class CategorieService
             );
         }
 
-        if (!$categorie->delete()) {
+        if (!$category->delete()) {
             return ApiResponse::serverError(
                 ApiCode::CATEGORY_DELETE_ERROR,
-                $categorie->getErrors()
+                $category->getErrors()
             );
         }
 

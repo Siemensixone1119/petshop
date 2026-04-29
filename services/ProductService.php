@@ -8,15 +8,49 @@ use app\helpers\ApiCode;
 
 class ProductService
 {
-    public function getProductList($categoryId = null): array
+    public function getProductList($categoryId = null, $search, $sort): array
     {
-        if (!$categoryId) {
-            return ApiResponse::success(Product::find()->all());
+        $search = trim((string)$search);
+        $sort = trim((string)$sort);
+        $query = Product::find();
+
+        if ($categoryId !== null) {
+            $query->andWhere(['category_id' => $categoryId]);
         }
 
-        return ApiResponse::success(
-            Product::find()->where(['category_id' => $categoryId])->all()
-        );
+        if ($search !== '') {
+            $query->andWhere([
+                'or',
+                ['ilike', 'name', $search],
+                ['ilike', 'description', $search]
+            ]);
+        }
+
+        switch ($sort) {
+            case 'price_asc':
+                $query->orderBy(['price' => SORT_ASC]);
+                break;
+            case 'price_desc':
+                $query->orderBy(['price' => SORT_DESC]);
+                break;
+            case 'date_asc':
+                $query->orderBy(['created_at' => SORT_ASC]);
+                break;
+            case 'date_desc':
+                $query->orderBy(['created_at' => SORT_DESC]);
+                break;
+            case 'name_asc':
+                $query->orderBy(['name' => SORT_ASC]);
+                break;
+            case 'name_desc':
+                $query->orderBy(['name' => SORT_DESC]);
+                break;
+            default:
+                $query->orderBy(['id' => SORT_DESC]);
+                break;
+        }
+
+        return ApiResponse::success($query->all());
     }
 
     public function getProductById($id): array

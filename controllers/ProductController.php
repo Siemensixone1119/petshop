@@ -8,10 +8,13 @@ use app\services\ProductService;
 
 class ProductController extends BaseController
 {
-  public function actionIndex($categoryId)
+  public function actionIndex($categoryId = null)
   {
+    $search = Yii::$app->request->get('search', '');
+    $sort = Yii::$app->request->get('sort', '');
+
     $productService = new ProductService();
-    $productList = $productService->getProductList($categoryId);
+    $productList = $productService->getProductList($categoryId, $search, $sort);
 
     if ($productList['success']) {
       Yii::$app->response->statusCode = 200;

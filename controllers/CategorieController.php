@@ -4,19 +4,19 @@ namespace app\controllers;
 
 use Yii;
 use app\controllers\BaseController;
-use app\services\CategorieService;
+use app\services\CategoryService;
 
 class CategorieController extends BaseController
 {
     public function actionIndex()
     {
         Yii::$app->response->statusCode = 200;
-        return (new CategorieService())->getCategorieList();
+        return (new CategoryService())->getCategoryList();
     }
 
     public function actionView($id)
     {
-        $categorie = (new CategorieService())->getCategorieById($id);
+        $categorie = (new CategoryService())->getCategoryById($id);
 
         if ($categorie['success']) {
             Yii::$app->response->statusCode = 200;
@@ -30,8 +30,8 @@ class CategorieController extends BaseController
     public function actionCreate()
     {
         $data = Yii::$app->request->getBodyParams();
-        $categorieService = new CategorieService();
-        $result = $categorieService->createCategorie($data);
+        $categoryService = new CategoryService();
+        $result = $categoryService->createCategory($data);
 
         if ($result['success']) {
             Yii::$app->response->statusCode = 201;
@@ -46,8 +46,8 @@ class CategorieController extends BaseController
     {
         $data = Yii::$app->request->getBodyParams();
 
-        $categorieService = new CategorieService();
-        $result = $categorieService->updateCategorie($id, $data);
+        $categoryService = new CategoryService();
+        $result = $categoryService->updateCategory($id, $data);
 
         if ($result['success']) {
             Yii::$app->response->statusCode = 200;
@@ -60,8 +60,8 @@ class CategorieController extends BaseController
 
     public function actionDelete($id)
     {
-        $categorieService = new CategorieService();
-        $result = $categorieService->deleteCategorie($id);
+        $categoryService = new CategoryService();
+        $result = $categoryService->deleteCategory($id);
 
         if ($result['success']) {
             Yii::$app->response->statusCode = 200;

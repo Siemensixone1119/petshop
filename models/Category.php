@@ -4,7 +4,7 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 
-class Categorie extends ActiveRecord
+class Category extends ActiveRecord
 {
 
     public static function tableName()
@@ -18,10 +18,12 @@ class Categorie extends ActiveRecord
             [['description', 'image'], 'default', 'value' => null],
             [['name', 'slug'], 'required'],
             [['description'], 'string'],
+            [['parent_id'], 'integer'],
             [['name'], 'string', 'max' => 100],
             [['image'], 'string', 'max' => 255],
             [['slug'], 'string', 'max' => 120],
             [['slug'], 'unique'],
+            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['parent_id' => 'id']],
         ];
     }
 
@@ -34,6 +36,16 @@ class Categorie extends ActiveRecord
             'image' => 'Изображение',
             'slug' => 'Slug',
         ];
+    }
+
+    public function getParent()
+    {
+        return $this->hasOne(self::class, ['id' => 'parent_id']);
+    }
+
+    public function getChildren()
+    {
+        return $this->hasMany(self::class, ['parent_id' => 'id']);
     }
 
     public function getProducts()
