@@ -10,11 +10,10 @@ class ProductController extends BaseController
 {
   public function actionIndex($categoryId = null)
   {
-    $search = Yii::$app->request->get('search', '');
-    $sort = Yii::$app->request->get('sort', '');
+    $params = Yii::$app->request->get();
 
     $productService = new ProductService();
-    $productList = $productService->getProductList($categoryId, $search, $sort);
+    $productList = $productService->getProductList($categoryId, $params);
 
     if ($productList['success']) {
       Yii::$app->response->statusCode = 200;

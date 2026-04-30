@@ -8,49 +8,79 @@ use app\helpers\ApiCode;
 
 class ProductService
 {
-    public function getProductList($categoryId = null, $search, $sort): array
+    public function getProductList($categoryId = null, array $params = []): array
     {
-        $search = trim((string)$search);
-        $sort = trim((string)$sort);
         $query = Product::find();
 
         if ($categoryId !== null) {
             $query->andWhere(['category_id' => $categoryId]);
         }
 
+        $search = trim($params['search'] ?? '');
+
         if ($search !== '') {
-            $query->andWhere([
+            $query->andFilterWhere([
                 'or',
                 ['ilike', 'name', $search],
-                ['ilike', 'description', $search]
+                ['ilike', 'description', $search],
             ]);
         }
 
+        $sort = $params['sort'] ?? 'default';
+
         switch ($sort) {
-            case 'price_asc':
+            case 'price-asc':
                 $query->orderBy(['price' => SORT_ASC]);
                 break;
-            case 'price_desc':
+
+            case 'price-desc':
                 $query->orderBy(['price' => SORT_DESC]);
                 break;
-            case 'date_asc':
-                $query->orderBy(['created_at' => SORT_ASC]);
-                break;
-            case 'date_desc':
-                $query->orderBy(['created_at' => SORT_DESC]);
-                break;
-            case 'name_asc':
+
+            case 'name-asc':
                 $query->orderBy(['name' => SORT_ASC]);
                 break;
-            case 'name_desc':
+
+            case 'name-desc':
                 $query->orderBy(['name' => SORT_DESC]);
                 break;
+
             default:
                 $query->orderBy(['id' => SORT_DESC]);
                 break;
         }
 
-        return ApiResponse::success($query->all());
+        $page = (int)($params['page'] ?? 1);
+        $perPage = (int)($params['per-page'] ?? 8);
+
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        if ($perPage < 1) {
+            $perPage = 8;
+        }
+
+        if ($perPage > 50) {
+            $perPage = 50;
+        }
+
+        $total = (clone $query)->count();
+
+        $products = $query
+            ->offset(($page - 1) * $perPage)
+            ->limit($perPage)
+            ->all();
+
+        return ApiResponse::success([
+            'items' => $products,
+            'pagination' => [
+                'page' => $page,
+                'per_page' => $perPage,
+                'total' => (int)$total,
+                'total_pages' => (int)ceil($total / $perPage),
+            ],
+        ]);
     }
 
     public function getProductById($id): array
