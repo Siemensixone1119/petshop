@@ -18,6 +18,11 @@ const routes = [
         component: CatalogPage,
     },
     {
+        path: '/catalog/:categoryId',
+        name: 'catalog-category',
+        component: CatalogPage,
+    },
+    {
         path: '/cart',
         name: 'cart',
         component: CartPage,

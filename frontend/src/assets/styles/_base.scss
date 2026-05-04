@@ -28,6 +28,8 @@ body {
     max-width: 100%;
     overscroll-behavior-y: none;
     background-color: $color-page-bg;
+    position: relative;
+    margin-bottom: 60px;
 }
 
 h1,
@@ -80,4 +82,32 @@ video {
 
 ::placeholder {
     color: grey;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    #app {
+        padding-bottom: 60px;
+    }
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+
+    @media (min-width: 576px) {
+        padding: 0 20px;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 80px;
+    }
 }

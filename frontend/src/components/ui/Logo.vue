@@ -5,7 +5,7 @@ import { PawPrint } from '@lucide/vue';
 <template>
     <RouterLink to="/" class="logo">
         <div class="logo__icon-wrapper">
-            <PawPrint :size="40" color="#ea8386" class="logo__icon" />
+            <PawPrint color="#ea8386" class="logo__icon" />
         </div>
 
         <div class="logo__content">
@@ -33,6 +33,8 @@ import { PawPrint } from '@lucide/vue';
     &__icon {
         fill: $color-primary;
         transform: rotate(-45deg);
+        width: 36px;
+        height: 36px;
     }
 
     &__content {
@@ -50,6 +52,29 @@ import { PawPrint } from '@lucide/vue';
 
     &__subtitle {
         font-size: 14px;
+    }
+
+    @media screen and (max-width: 1024px) {
+        &__icon-wrapper {
+            padding: 4px;
+        }
+
+        &__icon{
+            width: 30px;
+            height: 30px;
+        }
+
+        &__title{
+            font-size: 16px;
+        }
+
+        &__subtitle{
+            font-size: 12px;
+        }
+    }
+
+    @media screen and (max-width: 576px){
+        display: none;
     }
 }
 </style>

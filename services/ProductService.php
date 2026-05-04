@@ -3,6 +3,7 @@
 namespace app\services;
 
 use app\models\Product;
+use app\models\Category;
 use app\helpers\ApiResponse;
 use app\helpers\ApiCode;
 
@@ -13,7 +14,17 @@ class ProductService
         $query = Product::find();
 
         if ($categoryId !== null) {
-            $query->andWhere(['category_id' => $categoryId]);
+            $categoryIds = [$categoryId];
+            $childIds = Category::find()
+                ->select('id')
+                ->where(['parent_id' => $categoryId])
+                ->column();
+
+            if (!empty($childIds)) {
+                $categoryIds = array_merge($categoryIds, $childIds);
+            }
+
+            $query->andWhere(['category_id' => $categoryIds]);
         }
 
         $search = trim($params['search'] ?? '');
@@ -37,6 +48,14 @@ class ProductService
                 $query->orderBy(['price' => SORT_DESC]);
                 break;
 
+            case 'date-asc':
+                $query->orderBy(['created_at' => SORT_ASC]);
+                break;
+
+            case 'date-desc':
+                $query->orderBy(['created_at' => SORT_DESC]);
+                break;
+
             case 'name-asc':
                 $query->orderBy(['name' => SORT_ASC]);
                 break;
@@ -51,14 +70,14 @@ class ProductService
         }
 
         $page = (int)($params['page'] ?? 1);
-        $perPage = (int)($params['per-page'] ?? 8);
+        $perPage = (int)($params['per-page'] ?? 46);
 
         if ($page < 1) {
             $page = 1;
         }
 
         if ($perPage < 1) {
-            $perPage = 8;
+            $perPage = 46;
         }
 
         if ($perPage > 50) {

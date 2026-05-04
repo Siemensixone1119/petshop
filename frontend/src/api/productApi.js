@@ -1,12 +1,12 @@
 import { api } from './http'
 
 export const productApi = {
-    getAll() {
-        return api.get('/products')
+    getAll(params = {}) {
+        return api.get('/products', { params })
     },
 
-    getByCategory(categoryId) {
-        return api.get(`/categories/${categoryId}/products`)
+    getByCategory(categoryId, params = {}) {
+        return api.get(`/categories/${categoryId}/products`, { params })
     },
 
     getById(id) {
