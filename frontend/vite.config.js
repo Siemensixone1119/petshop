@@ -5,10 +5,10 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/petshop-api': {
-        target: 'http://petshop-api',
+      '/localhost:8080': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/petshop-api/, ''),
+        rewrite: (path) => path.replace(/^\/localhost:8080/, ''),
       },
     },
   },

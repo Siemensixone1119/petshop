@@ -53,6 +53,7 @@ $config = [
                 'POST auth/register' => 'auth/register',
                 'POST auth/login' => 'auth/login',
                 'POST auth/logout' => 'auth/logout',
+                'GET auth/me' => 'auth/me',
 
                 // Categories
                 'GET categories' => 'categorie/index',

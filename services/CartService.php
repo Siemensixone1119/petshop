@@ -10,6 +10,50 @@ use app\helpers\ApiCode;
 
 class CartService
 {
+  private function serializeCart(Cart $cart): array
+  {
+    $items = CartItem::find()
+      ->where(['cart_id' => $cart->id])
+      ->with('product')
+      ->orderBy(['id' => SORT_ASC])
+      ->all();
+
+    $totalCount = 0;
+    $totalAmount = 0;
+    $serializedItems = [];
+
+    foreach ($items as $item) {
+      $product = $item->product;
+      $price = $product ? (float)$product->price : 0;
+      $quantity = (int)$item->quantity;
+      $totalCount += $quantity;
+      $totalAmount += $price * $quantity;
+
+      $serializedItems[] = [
+        'id' => $item->id,
+        'cart_id' => $item->cart_id,
+        'product_id' => $item->product_id,
+        'quantity' => $quantity,
+        'product' => $product ? [
+          'id' => $product->id,
+          'name' => $product->name,
+          'description' => $product->description,
+          'price' => (float)$product->price,
+          'image' => $product->image,
+          'category_id' => $product->category_id,
+        ] : null,
+      ];
+    }
+
+    return [
+      'id' => $cart->id,
+      'user_id' => $cart->user_id,
+      'items' => $serializedItems,
+      'total_count' => $totalCount,
+      'total_amount' => $totalAmount,
+    ];
+  }
+
   public function viewCart($userId): array
   {
     if (!$userId) {
@@ -28,7 +72,7 @@ class CartService
       );
     }
 
-    return ApiResponse::success($cart);
+    return ApiResponse::success($this->serializeCart($cart));
   }
 
   public function addCartItem($productId, $userId): array
@@ -91,7 +135,7 @@ class CartService
       return ApiResponse::validation($cartItem);
     }
 
-    return ApiResponse::success($cartItem);
+    return ApiResponse::success($this->serializeCart($cart));
   }
 
   public function updateItemCart($itemId, $quantity, $userId): array
@@ -153,7 +197,7 @@ class CartService
       return ApiResponse::validation($cartItem);
     }
 
-    return ApiResponse::success($cartItem);
+    return ApiResponse::success($this->serializeCart($cart));
   }
 
   public function removeCartItem($itemId, $userId): array
@@ -196,7 +240,7 @@ class CartService
       );
     }
 
-    return ApiResponse::success($cartItem);
+    return ApiResponse::success($this->serializeCart($cart));
   }
 
   public function removeAllCartItem($userId): array
@@ -205,9 +249,9 @@ class CartService
       return ApiResponse::missingFields(['user_id']);
     }
 
-    $cart = $this->viewCart($userId);
+    $cart = Cart::findOne(['user_id' => $userId]);
 
-    if (!$cart['success']) {
+    if (!$cart) {
       return ApiResponse::error(
         ApiCode::CART_NOT_FOUND,
         404,
@@ -217,8 +261,8 @@ class CartService
       );
     }
 
-    CartItem::deleteAll(['cart_id' => $cart['data']->id]);
+    CartItem::deleteAll(['cart_id' => $cart->id]);
 
-    return ApiResponse::success($cart['data']);
+    return ApiResponse::success($this->serializeCart($cart));
   }
 }

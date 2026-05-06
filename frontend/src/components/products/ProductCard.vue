@@ -1,24 +1,61 @@
 <script setup>
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BaseButton from '../ui/BaseButton.vue';
+import { useAuth } from '../../composables/useAuth';
+import { useCart } from '../../composables/useCart';
 
-defineProps({
+const props = defineProps({
   product: {
     type: Object
   }
 })
 
 const apiUrl = import.meta.env.VITE_API_URL
+const route = useRoute();
+const router = useRouter();
+const { isAuthenticated } = useAuth();
+const { addItem } = useCart();
+const isAdding = ref(false);
+const buttonLabel = ref('В корзину');
+
+const openProduct = () => {
+  router.push({ name: 'product', params: { id: props.product.id } });
+}
+
+const addToCart = async () => {
+  if (!isAuthenticated.value) {
+    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    return;
+  }
+
+  isAdding.value = true;
+
+  try {
+    await addItem(props.product.id);
+    buttonLabel.value = 'Добавлено';
+    window.setTimeout(() => {
+      buttonLabel.value = 'В корзину';
+    }, 1200);
+  } catch (error) {
+    if (error.response?.status === 401) {
+      router.push({ name: 'login', query: { redirect: route.fullPath } });
+    }
+  } finally {
+    isAdding.value = false;
+  }
+}
 </script>
 <template>
-  <div class="product-card">
+  <div class="product-card" role="link" tabindex="0" @click="openProduct" @keydown.enter.self="openProduct">
     <div class="product-card__media">
       <img :src="apiUrl + product.image" alt="">
     </div>
     <div class="product-card__body">
       <h3 class="product-card__title">{{ product.name }}</h3>
       <div class="product-card__body-bottom">
-        <span class="product-card__price">{{ product.price }}</span>
-        <BaseButton label="В корзину" />
+        <span class="product-card__price">{{ Number(product.price).toLocaleString('ru-RU') }} Р</span>
+        <BaseButton :label="isAdding ? 'Добавляем...' : buttonLabel" :disabled="isAdding" @click.stop="addToCart" />
       </div>
     </div>
   </div>
@@ -33,6 +70,7 @@ const apiUrl = import.meta.env.VITE_API_URL
   height: 100%;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 
   &__media {
     background:

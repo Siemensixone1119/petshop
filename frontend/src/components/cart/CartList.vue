@@ -1,23 +1,25 @@
 <script setup>
 import CartItem from './CartItem.vue';
+
+defineProps({
+  items: {
+    type: Array,
+    default: () => []
+  }
+})
+
+defineEmits(['increment', 'decrement', 'remove'])
 </script>
 
 <template>
   <ul class="cart-list">
-    <li class="cart-list__item">
-      <CartItem />
-    </li>
-    <li class="cart-list__item">
-      <CartItem />
-    </li>
-    <li class="cart-list__item">
-      <CartItem />
-    </li>
-    <li class="cart-list__item">
-      <CartItem />
-    </li>
-    <li class="cart-list__item">
-      <CartItem />
+    <li v-for="item in items" :key="item.id" class="cart-list__item">
+      <CartItem
+        :item="item"
+        @increment="$emit('increment', item)"
+        @decrement="$emit('decrement', item)"
+        @remove="$emit('remove', item)"
+      />
     </li>
   </ul>
 </template>

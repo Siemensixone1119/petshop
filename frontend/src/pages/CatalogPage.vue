@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { productApi } from '../api/productApi';
 import ProductList from '../components/products/ProductList.vue';
-import SearchField from '../components/ui/SearchField.vue';
 import SortField from '../components/ui/SortField.vue';
 import FilterField from '../components/ui/FilterField.vue';
 
@@ -22,7 +21,6 @@ const route = useRoute();
 const router = useRouter();
 
 const products = ref([]);
-const search = ref(route.query.search ?? '');
 const sort = ref(route.query.sort ?? 'default');
 
 const activeCategoryId = computed(() => {
@@ -34,14 +32,31 @@ const activeCategory = computed(() =>
   props.allCategories.find(item => Number(item.id) === activeCategoryId.value) ?? null
 )
 
+const normalizeParentId = (value) => {
+  if (value === null || value === undefined || value === '' || value === 0 || value === '0') {
+    return null
+  }
+
+  return Number(value)
+}
+
+const rootCategories = computed(() =>
+  props.allCategories.filter(item => normalizeParentId(item.parent_id) === null)
+)
+
 const subcategories = computed(() => {
+  if (!activeCategoryId.value) {
+    return props.allCategories.filter(item => normalizeParentId(item.parent_id) !== null)
+  }
+
   if (!activeCategory.value) {
     return []
   }
 
-  const parentId = activeCategory.value.parent_id ?? activeCategory.value.id
+  const activeParentId = normalizeParentId(activeCategory.value.parent_id)
+  const parentId = activeParentId ?? Number(activeCategory.value.id)
 
-  return props.allCategories.filter(item => Number(item.parent_id) === Number(parentId))
+  return props.allCategories.filter(item => normalizeParentId(item.parent_id) === Number(parentId))
 })
 
 const requestParams = computed(() => {
@@ -76,20 +91,12 @@ const updateQuery = (name, value) => {
 }
 
 watch(
-  () => route.query.search,
-  value => {
-    search.value = value ?? ''
-  }
-)
-
-watch(
   () => route.query.sort,
   value => {
     sort.value = value ?? 'default'
   }
 )
 
-watch(search, value => updateQuery('search', value))
 watch(sort, value => updateQuery('sort', value))
 
 watch(
@@ -114,7 +121,7 @@ watch(
     <div class="catalog-content__filters">
       <FilterField
         title="Категории"
-        :categories="categories"
+        :categories="rootCategories"
         :active-category-id="activeCategoryId"
         show-all-link
       />
@@ -125,7 +132,9 @@ watch(
         :active-category-id="activeCategoryId"
       />
     </div>
-    <ProductList :products="products" />
+    <div class="catalog-content__main">
+      <ProductList :products="products" />
+    </div>
   </div>
 </template>
 
@@ -150,5 +159,15 @@ watch(
   display: grid;
   grid-template-columns: 1fr 3fr;
   gap: 15px;
+
+  &__main {
+    min-width: 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .catalog-content {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -1,29 +1,83 @@
 <script setup>
-import { Menu, ShoppingCart, ShoppingCartIcon, User, House } from '@lucide/vue';
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { LogOut, Menu, ShoppingCart, User, House } from '@lucide/vue';
 import Logo from '../ui/Logo.vue';
 import SearchField from '../ui/SearchField.vue';
 import HeaderAction from '../ui/HeaderAction.vue';
+import { useAuth } from '../../composables/useAuth';
+import { useCart } from '../../composables/useCart';
+
+const route = useRoute();
+const router = useRouter();
+const search = ref(route.query.search ?? '');
+const { user, isAuthenticated, logout } = useAuth();
+const { count, clearCart } = useCart();
+
+const profileLabel = computed(() => user.value?.login || 'Профиль');
+
+watch(
+    () => route.query.search,
+    value => {
+        search.value = value ?? '';
+    }
+)
+
+const submitSearch = () => {
+    const query = { ...route.query };
+    const value = search.value.trim();
+
+    if (value) {
+        query.search = value;
+    } else {
+        delete query.search;
+    }
+
+    router.push({ name: 'catalog', query });
+}
+
+const handleProfile = async () => {
+    if (!isAuthenticated.value) {
+        router.push({ name: 'login' });
+        return;
+    }
+
+    router.push({ name: 'profile' });
+}
+
+const handleLogout = async () => {
+    await logout();
+    clearCart();
+    router.push({ name: 'main' });
+}
 </script>
 
 <template>
     <header class="header">
         <div class="header__content container">
             <Logo />
-            <SearchField />
+            <SearchField v-model="search" @submit="submitSearch" />
             <div class="header-actions">
-                <HeaderAction label="Главное" class="header-action--main">
-                    <House />
-                </HeaderAction>
-                <RouterLink to="catalog">
+                <RouterLink to="/" class="header-action--main">
+                    <HeaderAction label="Главное">
+                        <House />
+                    </HeaderAction>
+                </RouterLink>
+                <RouterLink to="/catalog">
                     <HeaderAction label="Каталог">
                         <Menu />
                     </HeaderAction>
                 </RouterLink>
-                <HeaderAction label="Корзина" :count="2">
-                    <ShoppingCart />
-                </HeaderAction>
-                <HeaderAction label="Профиль">
+                <RouterLink to="/cart">
+                    <HeaderAction label="Корзина" :count="count">
+                        <ShoppingCart />
+                    </HeaderAction>
+                </RouterLink>
+                <HeaderAction :label="profileLabel" @click="handleProfile">
                     <User />
+                </HeaderAction>
+                <HeaderAction v-if="isAuthenticated" label="Выйти" @click="handleLogout">
+                    <LogOut />
                 </HeaderAction>
             </div>
         </div>

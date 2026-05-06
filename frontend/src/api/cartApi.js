@@ -16,4 +16,8 @@ export const cartApi = {
     deleteItem(id) {
         return api.delete(`/cart/items/${id}`)
     },
+
+    clear() {
+        return api.delete('/cart')
+    },
 }

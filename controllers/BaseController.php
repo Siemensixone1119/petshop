@@ -57,6 +57,6 @@ class BaseController extends Controller
             return null;
         }
 
-        return $result['data']->id;
+        return $result['data']['id'] ?? null;
     }
 }

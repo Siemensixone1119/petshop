@@ -16,7 +16,7 @@ import BaseButton from '../ui/BaseButton.vue';
           <BaseButton label="Перейти в каталог" />
         </RouterLink>
         <div class="hero__media">
-          <img src="../../../assets/images/hero/hero1.png" alt="">
+          <img src="../../assets/images/hero/hero1.png" alt="">
         </div>
       </div>
     </div>

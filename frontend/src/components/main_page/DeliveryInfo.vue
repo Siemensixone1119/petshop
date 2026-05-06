@@ -4,7 +4,7 @@
     <ul class="delivery-info__list">
       <li class="delivery-info__item">
         <div class="delivery-info__media">
-          <img src="../../../assets/images/delivery/img1.png" alt="">
+          <img src="../../assets/images/delivery/img1.png" alt="">
         </div>
         <div class="delivery-info__body">
           <span class="delivery-info__title">Быстрая доставка</span>
@@ -13,7 +13,7 @@
       </li>
       <li class="delivery-info__item">
         <div class="delivery-info__media">
-          <img src="../../../assets/images/delivery/img2.png" alt="">
+          <img src="../../assets/images/delivery/img2.png" alt="">
         </div>
         <div class="delivery-info__body">
           <span class="delivery-info__title">Гарантия качества</span>
@@ -22,7 +22,7 @@
       </li>
       <li class="delivery-info__item">
         <div class="delivery-info__media">
-          <img src="../../../assets/images/delivery/img3.png" alt="">
+          <img src="../../assets/images/delivery/img3.png" alt="">
         </div>
         <div class="delivery-info__body">
           <span class="delivery-info__title">Удобная оплата</span>
@@ -31,7 +31,7 @@
       </li>
       <li class="delivery-info__item">
         <div class="delivery-info__media">
-          <img src="../../../assets/images/delivery/img4.png" alt="">
+          <img src="../../assets/images/delivery/img4.png" alt="">
         </div>
         <div class="delivery-info__body">
           <span class="delivery-info__title">Забота о клиентах</span>

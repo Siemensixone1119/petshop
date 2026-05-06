@@ -139,7 +139,10 @@ class OrderService
       return ApiResponse::missingFields($missingFields);
     }
 
-    $order = Order::findOne(['user_id' => $userId]);
+    $order = Order::findOne([
+      'id' => $id,
+      'user_id' => $userId,
+    ]);
 
     if (!$order) {
       return ApiResponse::error(
@@ -181,7 +184,10 @@ class OrderService
       return ApiResponse::missingFields($missingFields);
     }
 
-    $order = Order::findOne(['id' => $userId]);
+    $order = Order::findOne([
+      'id' => $id,
+      'user_id' => $userId,
+    ]);
 
     if (!$order) {
       return ApiResponse::error(

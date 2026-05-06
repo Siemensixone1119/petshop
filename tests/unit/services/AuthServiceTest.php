@@ -178,7 +178,7 @@ class AuthServiceTest extends Unit
         $user->auth_token = 'TEST_TOKEN_123456';
         $user->save(false);
 
-        $response = $this->authService->logout($user);
+        $response = $this->authService->logout($user->auth_token);
 
         $this->assertTrue($response['success']);
 

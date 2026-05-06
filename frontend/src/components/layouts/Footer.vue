@@ -4,7 +4,8 @@ import { Icon } from "@iconify/vue";
 
 defineProps({
   categories: {
-    type: Object
+    type: Array,
+    default: () => []
   }
 })
 </script>

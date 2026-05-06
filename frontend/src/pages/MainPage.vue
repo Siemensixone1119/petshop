@@ -6,7 +6,7 @@ import { ArrowRight } from "@lucide/vue";
 import Hero from '../components/main_page/Hero.vue';
 import CategoryList from '../components/categories/CategoryList.vue';
 import ProductList from '../components/products/ProductList.vue';
-import DeliviryInfo from '../components/main_page/DeliveryInfo.vue';
+import DeliveryInfo from '../components/main_page/DeliveryInfo.vue';
 
 defineProps({
     categories: {
@@ -30,13 +30,13 @@ onMounted(async () => {
         <div class="product-list__head container">
             <h2 class="product-list__title">Популярные товары</h2>
             <RouterLink to="catalog" class="product-list__link">
-                Смотерть все
+                Смотреть все
                 <ArrowRight />
             </RouterLink>
         </div>
         <ProductList :products="products.slice(0, 4)" />
     </div>
-    <DeliviryInfo />
+    <DeliveryInfo />
 </template>
 
 <style lang="scss" scoped>

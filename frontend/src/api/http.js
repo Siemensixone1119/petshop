@@ -1,6 +1,6 @@
 import axios from 'axios'
 
 export const api = axios.create({
-  baseURL: '/petshop-api',
+  baseURL: '/localhost:8080',
   withCredentials: true,
 })

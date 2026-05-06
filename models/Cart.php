@@ -43,4 +43,9 @@ class Cart extends ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    public function getItems()
+    {
+        return $this->hasMany(CartItem::class, ['cart_id' => 'id']);
+    }
 }

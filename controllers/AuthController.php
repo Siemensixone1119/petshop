@@ -85,4 +85,18 @@ class AuthController extends BaseController
         Yii::$app->response->statusCode = 401;
         return $result;
     }
+
+    public function actionMe()
+    {
+        $currentToken = Yii::$app->request->cookies->getValue('auth_token');
+        $result = (new AuthService())->validateToken($currentToken);
+
+        if ($result['success']) {
+            Yii::$app->response->statusCode = 200;
+            return $result;
+        }
+
+        Yii::$app->response->statusCode = 401;
+        return $result;
+    }
 }

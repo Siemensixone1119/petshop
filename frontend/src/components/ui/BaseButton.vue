@@ -7,12 +7,20 @@ defineProps({
   second: {
     type: String,
     required: false
+  },
+  type: {
+    type: String,
+    default: 'button'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
 
 <template>
-  <button class="base-button" :class="`${second}`">
+  <button class="base-button" :class="`${second}`" :type="type" :disabled="disabled">
     {{ label }}
   </button>
 </template>
@@ -25,6 +33,11 @@ defineProps({
   color: $color-light-bg;
   padding: 10px 15px;
   border-radius: 8px;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
 }
 
 .second-btn {

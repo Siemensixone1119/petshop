@@ -60,15 +60,25 @@ const route = useRoute()
 
   &__title{
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 800;
     color: $color-primary;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
   }
 
   &__list{
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
+  }
+
+  &__link {
+    display: block;
+    font-weight: 700;
+    padding: 2px 0;
+  }
+
+  &__link--active {
+    color: $color-primary;
   }
 }
 </style>

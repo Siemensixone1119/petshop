@@ -1,6 +1,45 @@
 <script setup>
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BaseButton from '../components/ui/BaseButton.vue';
 import BaseInput from '../components/ui/BaseInput.vue';
+import { useAuth } from '../composables/useAuth';
+import { useCart } from '../composables/useCart';
+
+const route = useRoute();
+const router = useRouter();
+const { login } = useAuth();
+const { loadCart, clearCart } = useCart();
+
+const form = ref({
+  email: '',
+  password: '',
+});
+const isSubmitting = ref(false);
+const errorMessage = ref('');
+
+const submitLogin = async () => {
+  errorMessage.value = '';
+  isSubmitting.value = true;
+
+  try {
+    await login(form.value);
+
+    try {
+      await loadCart();
+    } catch {
+      clearCart();
+    }
+
+    router.push(route.query.redirect || { name: 'main' });
+  } catch (error) {
+    errorMessage.value = error.response?.data?.code === 'USER_NOT_FOUND' || error.response?.data?.code === 'INVALID_PASSWORD'
+      ? 'Неверный email или пароль'
+      : 'Не получилось войти. Проверьте данные и попробуйте еще раз.';
+  } finally {
+    isSubmitting.value = false;
+  }
+}
 </script>
 
 <template>
@@ -9,19 +48,20 @@ import BaseInput from '../components/ui/BaseInput.vue';
       <h1 class="login-slogan__title">Добро пожаловать в<br>PetShop Online!</h1>
       <span class="login-slogan__text">Всё для счастливых питомцев<br>и заботливых хозяев</span>
     </div>
-    <form action="" class="login-form">
+    <form class="login-form" @submit.prevent="submitLogin">
       <h2 class="login-form__title">Вход в личный кабинет</h2>
-      <BaseInput class="login-form__input" type="email" placeholder="Email" />
-      <BaseInput class="login-form__input" type="password" placeholder="Пароль" />
+      <BaseInput v-model="form.email" class="login-form__input" type="email" placeholder="Email" required />
+      <BaseInput v-model="form.password" class="login-form__input" type="password" placeholder="Пароль" required />
 
       <div class="login-form__checkbox-wrap">
         <input class="login-form__checkbox" type="checkbox" name="" id="1">
         <label class="login-form__label" for="1">Запомнить меня</label>
       </div>
 
-      <BaseButton class="login-form__btn" label="Войти" />
+      <p v-if="errorMessage" class="login-form__error">{{ errorMessage }}</p>
+      <BaseButton class="login-form__btn" :label="isSubmitting ? 'Входим...' : 'Войти'" type="submit" :disabled="isSubmitting" />
       <span class="login-form__text">или</span>
-      <BaseButton class="login-form__btn" label="Зарегестрироваться" second="second-btn" />
+      <BaseButton class="login-form__btn" label="Зарегистрироваться" second="second-btn" @click="router.push({ name: 'register' })" />
     </form>
   </div>
 </template>
@@ -69,6 +109,13 @@ import BaseInput from '../components/ui/BaseInput.vue';
 
   &__btn {
     width: 100%;
+  }
+
+  &__error {
+    width: 100%;
+    color: $color-primary;
+    font-weight: 700;
+    text-align: center;
   }
 }
 

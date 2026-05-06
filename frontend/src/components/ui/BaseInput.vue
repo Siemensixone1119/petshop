@@ -1,16 +1,30 @@
 <script setup>
 defineProps({
+  modelValue: {
+    type: [String, Number],
+    default: ''
+  },
   type: {
-    type: String
+    type: String,
+    default: 'text'
   },
   placeholder: {
-    type: String
+    type: String,
+    default: ''
   }
 })
+
+defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <input class="input" :type="`${type}`" :placeholder="`${placeholder}`">
+  <input
+    class="input"
+    :type="type"
+    :placeholder="placeholder"
+    :value="modelValue"
+    @input="$emit('update:modelValue', $event.target.value)"
+  >
 </template>
 
 <style lang="scss" scoped>

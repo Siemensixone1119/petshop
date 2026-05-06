@@ -83,8 +83,10 @@ class CartServiceTest extends Unit
         $response = $this->cartService->viewCart($this->user->id);
 
         $this->assertTrue($response['success']);
-        $this->assertInstanceOf(Cart::class, $response['data']);
-        $this->assertSame((int)$this->user->id, (int)$response['data']->user_id);
+        $this->assertIsArray($response['data']);
+        $this->assertSame((int)$this->user->id, (int)$response['data']['user_id']);
+        $this->assertCount(1, $response['data']['items']);
+        $this->assertSame(1, (int)$response['data']['total_count']);
     }
 
     public function testCanAddSameProductTwiceAndIncreaseQuantity()

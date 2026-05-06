@@ -3,13 +3,19 @@ import { computed } from "vue";
 import CategoryCard from './CategoryCard.vue';
 
 const props = defineProps({
-  categories: Array,
-  required: true
+  categories: {
+    type: Array,
+    default: () => []
+  }
 })
+
+const rootCategories = computed(() =>
+  props.categories.filter(item => item.parent_id === null || item.parent_id === undefined)
+)
 </script>
 <template>
   <ul class="category-list container">
-    <li v-for="item in categories" :key="item.id">
+    <li v-for="item in rootCategories" :key="item.id">
       <CategoryCard :category="item" />
     </li>
   </ul>

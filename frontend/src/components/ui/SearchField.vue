@@ -8,12 +8,12 @@ defineProps({
   }
 })
 
-defineEmits(['update:modelValue'])
+defineEmits(['update:modelValue', 'submit'])
 </script>
 
 <template>
   <div class="search">
-    <form class="search__form" role="search" @submit.prevent>
+    <form class="search__form" role="search" @submit.prevent="$emit('submit', modelValue)">
       <input
         class="search__input"
         type="search"
@@ -21,8 +21,9 @@ defineEmits(['update:modelValue'])
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       >
-
-      <Search class="search__icon" :size="24" color="#270f0A" aria-hidden="true" />
+      <button class="search__button" type="submit" aria-label="Найти товары">
+        <Search class="search__icon" :size="24" color="#270f0A" aria-hidden="true" />
+      </button>
     </form>
   </div>
 </template>
@@ -56,11 +57,13 @@ defineEmits(['update:modelValue'])
     border: 2px solid $color-line;
   }
 
-  &__icon {
+  &__button {
     position: absolute;
     bottom: 50%;
     transform: translateY(50%);
     right: 10px;
+    display: grid;
+    place-items: center;
   }
 
 
