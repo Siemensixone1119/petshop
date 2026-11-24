@@ -27,6 +27,10 @@ export function useAuth() {
   const isAuthenticated = computed(() => Boolean(user.value))
 
   const initAuth = async () => {
+    if (!user.value) {
+      return
+    }
+
     isLoading.value = true
 
     try {
